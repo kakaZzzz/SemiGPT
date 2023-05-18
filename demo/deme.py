@@ -1,25 +1,23 @@
+from selenium import webdriver
 import json
-import requests
-from bs4 import BeautifulSoup
 
 url = 'https://movie.douban.com/top250'
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'
-}
-response = requests.get(url, headers=headers)
+driver = webdriver.Chrome()
+driver.get(url)
 
-soup = BeautifulSoup(response.text, 'html.parser')
 movies = []
-for movie in soup.find_all('div', class_='info'):
-    title = movie.find('span', class_='title').text
-    score = movie.find('span', class_='rating_num').text
-    author = movie.find('p', class_='').text.strip().split('\n')[0]
+for i in range(10):  # 抓取前10页,每页25条信息
+    driver.find_element_by_class_name('next').click()
+    li_list = driver.find_elements_by_tag_name('li')
+    for li in li_list:
+        movie = {}
+        movie['ranking'] = li.find_element_by_class_name('pic').find_element_by_tag_name('em').text
+        movie['name'] = li.find_element_by_class_name('info').find_element_by_tag_name('a').text
+        movie['score'] = li.find_element_by_class_name('star').find_element_by_tag_name('span').text
+        movie['quote'] = li.find_element_by_class_name('quote').find_element_by_tag_name('span').text
+        movies.append(movie)
 
-    movies.append({
-        'title': title,
-        'score': score,
-        'author': author
-    })
+with open('douban_top250.json', 'w', encoding='utf-8') as f:
+    json.dump(movies, f, ensure_ascii=False, indent=4)
 
-with open('douban_top250.json', 'w', encoding='utf-8') as f: 
-    json.dump(movies, f, indent=4, ensure_ascii=False)
+driver.close()
