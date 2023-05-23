@@ -8,3 +8,4 @@
 /dist
 .swc
 /api/__pycache__
+.env

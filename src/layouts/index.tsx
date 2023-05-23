@@ -31,8 +31,12 @@ const items: MenuProps['items'] = [
 ].map((icon, index) => ({
   key: String(index + 1),
   icon: React.createElement(icon),
-  label: `nav ${index + 1}`,
+  label: `History ${index + 1}`,
 }));
+
+function ask(){
+  alert(1)
+}
 
 const App: React.FC = () => {
   const {
@@ -58,15 +62,11 @@ const App: React.FC = () => {
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
           <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
             <p>long content</p>
-            {
-              // indicates very long content
-              Array.from({ length: 100 }, (_, index) => (
-                <React.Fragment key={index}>
-                  {index % 20 === 0 && index ? 'more' : '...'}
-                  <br />
-                </React.Fragment>
-              ))
-            }
+          </div>
+        </Content>
+        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
+          <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
+            <p>long content</p>
           </div>
         </Content>
         <Footer style={{ 
@@ -79,7 +79,7 @@ const App: React.FC = () => {
           alignItems: 'center',
           textAlign: 'center',
          }}>
-          <Search placeholder="input search text" enterButton="Search" size="large" loading />
+          <Search placeholder="input search text" onSearch={ask} enterButton="Ask" size="large" />
          </Footer>
       </Layout>
     </Layout>

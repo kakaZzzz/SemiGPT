@@ -1,4 +1,7 @@
+from api.config import load_env
+
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
@@ -21,9 +24,13 @@ from langchain.schema import (
     SystemMessage
 )
 
-# api keys
 import os
-os.environ["OPENAI_API_KEY"] = "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"
+
+# api keys
+
+envs = load_env()
+
+os.environ["OPENAI_API_KEY"] = envs["OPENAI_API_KEY"]
 os.environ["SERPAPI_API_KEY"] = "fe89b1adaaba86f6c8ca6ac3e3524b7c057b915cc2a42c10074f2b0421f7c962"
 os.environ["GOOGLE_CSE_ID"] = "05d376f54d3ac45e5"
 os.environ["GOOGLE_API_KEY"] = "AIzaSyABII3Xyk0eIqj76ebt_P1Hxr0gL0ABDOU"
@@ -53,6 +60,17 @@ chain = LLMChain(llm=llm, prompt=chat_prompt)
 
 
 app = FastAPI() # 创建API实例
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/")
 async def root():
